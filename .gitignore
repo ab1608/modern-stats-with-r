@@ -1,0 +1,15 @@
+# MacOS
+.DS_Store
+
+# Quarto generated files
+.quarto/
+.qmd.yml
+_freeze/
+_site/
+*.html
+*.png
+*.pdf
+*.docx
+*/libs
+*/figure-html
+*.csv

@@ -1,0 +1,252 @@
+---
+title: "Diving deeper with Palmer Penguins"
+execute: 
+  warning: false
+---
+
+# Introduction
+
+How do sizes of penguins vary across species, islands, and sexes?
+What about other characteristics?
+
+## Packages
+
+We will use the **tidyverse** and **ggbeeswarm** packages for data wrangling and visualization and the **palmerpenguins** package for the data.
+
+```{r}
+#| label: load-packages
+#| message: false
+library(tidyverse)
+library(palmerpenguins)
+library(ggbeeswarm)
+```
+
+## Data
+
+The dataset we will visualize is called `penguins`.
+Let's `glimpse()` at it.
+
+```{r}
+#| label: glimpse
+glimpse(penguins)
+```
+
+# Visualizing penguin weights
+
+## Single variable
+
+::: callout-note
+Analyzing the a single variable is called **univariate** analysis.
+:::
+
+Create visualizations of the distribution of `weight`s of penguins.
+
+### Exercise 1
+
+Make a histogram.
+Set an appropriate binwidth.
+
+```{r}
+#| label: histogram-weight
+penguins |> ggplot(aes(x = body_mass_g)) + geom_histogram(binwidth = 500)
+```
+
+### Exercise 2
+
+Make a boxplot.
+
+```{r}
+#| label: boxplot-weight
+penguins |> ggplot(aes(x = body_mass_g)) + geom_boxplot(na.rm = TRUE)
+```
+
+### Exercise 3
+
+Based on these, determine if each of the following statements about the shape of the distribution is true or false.
+
+-   The distribution of penguin weights in this sample is left skewed.
+    - False. The body mass is right skewed (positive) as indicated by the trailing tail on the right.
+-   The distribution of penguin weights in this sample is unimodal.
+    - True. There is peak beween the 3200-3700 range of body mass.
+
+## Two variables
+
+::: callout-note
+Analyzing the relationship between two variables is called **bivariate** analysis.
+:::
+
+Create visualizations of the distribution of `weight`s of penguins by `species`.
+
+### Exercise 4
+
+Make a single histogram.
+Set an appropriate binwidth.
+
+```{r}
+#| label: histogram-weight-species
+
+penguins |>
+  ggplot(aes(x = body_mass_g, fill = species, color = species)) +
+  geom_histogram(alpha = 0.4)
+```
+
+### Exercise 5
+
+Use multiple histograms via faceting, one for each species.
+Set an appropriate binwidth, add color as you see fit, and turn off legends if not needed.
+
+
+```{r}
+#| label: histogram-weight-species-facet
+
+penguins |>
+  ggplot(
+    aes(
+      x = body_mass_g,
+      fill = factor(species),
+      color = factor(species)
+    )
+  ) +
+  geom_histogram(alpha = 0.4) +
+  facet_wrap(~species, ncol = 1)
+```
+
+### Exercise 6
+
+Use side-by-side box plots.
+Add color as you see fit and turn off legends if not needed.
+
+```{r}
+#| label: boxplot-weight-species
+
+penguins |>
+  ggplot(aes(x = species, y = body_mass_g, color = species)) +
+  geom_boxplot(show.legend = FALSE)
+```
+
+### Exercise 7
+
+Use density plots.
+Add color as you see fit.
+
+```{r}
+#| label: density-weight-species
+
+penguins |>
+  ggplot(
+    aes(
+      x = body_mass_g,
+      fill = factor(species),
+      color = factor(species)
+    )
+  ) +
+  geom_density(alpha = 0.4, linewidth = 0.75)
+```
+
+### Exercise 8
+
+Use violin plots.
+Add color as you see fit and turn off legends if not needed.
+
+```{r}
+#| label: violin-weight-species
+# add code here
+penguins |>
+  ggplot(aes(x = species, y = body_mass_g, color = species, fill = species)) +
+  geom_violin(alpha = 0.5, show.legend = FALSE) +
+  geom_boxplot(width = 0.2, fill = "white", show.legend = FALSE)
+```
+
+### Exercise 9
+
+Make a jittered scatter plot.
+Add color as you see fit and turn off legends if not needed.
+
+```{r}
+#| label: jitter-weight-species
+penguins |>
+  ggplot(aes(x = species, y = body_mass_g)) +
+  geom_jitter(width = 0.2, alpha = 0.4, color = "steelblue")
+```
+
+### Exercise 10
+
+Use beeswarm plots.
+Add color as you see fit and turn off legends if not needed.
+
+```{r}
+#| label: beeswarm-weight-species
+
+ggplot(penguins, aes(x = species, y = body_mass_g)) +
+  geom_beeswarm()
+```
+
+### Exercise 11
+
+Use multiple geoms on a single plot.
+Be deliberate about the order of plotting.
+Change the theme and the color scale of the plot.
+Finally, add informative labels.
+
+```{r}
+#| label: multi-geoms
+# add code here
+```
+
+## Multiple variables
+
+::: callout-note
+Analyzing the relationship between three or more variables is called **multivariate** analysis.
+:::
+
+### Exercise 12
+
+Facet the plot you created in the previous exercise by `island`.
+Adjust labels accordingly.
+
+```{r}
+#| label: multi-geoms-facet
+# add code here
+```
+
+Before you continue, let's turn off all warnings the code chunks generate and resize all figures.
+We'll do this by editing the YAML.
+
+# Visualizing other variables
+
+### Exercise 13
+
+Pick a single categorical variable from the data set and make a bar plot of its distribution.
+
+```{r}
+#| label: barplot
+penguins |> ggplot(aes(x = fct_infreq(island))) + geom_bar()
+```
+
+### Exercise 14
+
+Pick two categorical variables and make a visualization to visualize the relationship between the two variables.
+Along with your code and output, provide an interpretation of the visualization.
+
+Add interpretation here.
+
+```{r}
+#| label: cat-cat
+penguins |> ggplot(aes(x = fct_infreq(species), color = island)) + geom_bar()
+```
+
+### Exercise 15
+
+Make another plot that uses at least three variables.
+At least one should be numeric and at least one categorical.
+In 1-2 sentences, describe what the plot shows about the relationships between the variables you plotted.
+Don't forget to label your code chunk.
+
+Add interpretation here.
+
+```{r}
+penguins |>
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, color = sex, fill = sex)) +
+  geom_point(alpha = 0.5, na.rm = TRUE) +
+  facet_grid(island ~ species)
+```
