@@ -93,3 +93,31 @@ ggplot(data = mpg, aes(x = factor(year), y = hwy)) +
 
 # Multiple linear regression
 mod_hwy <- lm(hwy ~ displ + factor(year), data = mpg)
+
+# add interaction term manually
+# interaction is the product of
+# displ * year(treated as a categorical var)
+
+#
+# Interpreting the coefficients in an interaction model becomes more complicated.
+# Note the difference between the fitted coefficients of the parallel slopes model
+# with the interaction model. The original slope of -3.61 mpg per liter for all cars
+# is now separated into two slopes: -3.77 mpg per liter for older cars,
+# and -3.46 (-3.77 + 0.31 = -3.46) mpg per liter for newer cars.
+# Thus, fuel economy for the older cars is not only lower overall,
+# but it also declines more rapidly as a function of engine size.
+# This importantly changes the interpretation of the model.
+# It suggests that the greater fuel economy of the 2008 cars is not just related to
+# the fact that they had smaller engines,
+# on average – a function mainly of consumer choice.
+# It suggests that the 2008 cars were also engineered better,
+# in that they were able to maintain fuel economy slightly better even with larger engine sizes.
+
+lm(hwy ~ displ + factor(year) + displ:factor(year), data = mpg)
+
+# No interaction between displ and year
+lm(hwy ~ displ + factor(year), data = mpg)
+
+###############################
+# --- LOGISTIC REGRESSION --- #
+###############################
