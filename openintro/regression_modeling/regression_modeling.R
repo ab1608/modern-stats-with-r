@@ -121,3 +121,123 @@ lm(hwy ~ displ + factor(year), data = mpg)
 ###############################
 # --- LOGISTIC REGRESSION --- #
 ###############################
+
+# Turn a caterogircal variable into a binary numerical value
+heart_transplant <- heart_transplant |>
+  mutate(is_alive = ifelse(survived == "alive", 1, 0))
+data_space <- ggplot(data = heart_transplant, aes(x = age, y = is_alive)) +
+  geom_jitter(width = 0, height = 0.05, alpha = 0.5)
+
+# Visualizing logistic regression
+# We note that the logistic graph never reaches 0 nor 1
+data_space +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_smooth(
+    method = "glm",
+    se = FALSE,
+    color = "red",
+    method.args = list(family = "binomial")
+  )
+
+# We can more clearly see the decline in probability
+# with age if we bin the ages and compute probability
+# per age group
+heart_breaks <- heart_transplant |>
+  pull(age) |>
+  quantile(probs = 0:7 / 7)
+
+data_binned_space <- data_space +
+  stat_summary_bin(
+    fun = "mean",
+    color = "red",
+    geom = "line",
+    breaks = heart_breaks
+  )
+
+data_binned_space
+
+# The logistic regression model where age is function of is_alive
+mod_heart <- glm(is_alive ~ age, data = heart_transplant, family = binomial)
+data_binned_space +
+  geom_line(
+    data = augment(mod_heart, type.predict = "response"),
+    aes(y = .fitted),
+    color = "blue"
+  )
+
+heart_transplant_plus <- mod_heart |>
+  augment(type.predict = "response") |>
+  mutate(y_hat = .fitted)
+
+heart_transplant_plus
+
+# This probability scale plot is has an intuitive scale,
+# it not linear so we cannot say that one unit increase in the explanatory (age)
+# is associated with some change in the response (is_alive)
+ggplot(heart_transplant_plus, aes(x = age, y = y_hat)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous("Probability of being alive", limits = c(0, 1))
+
+
+# Odds are defined as [y / (1-y)], i.e. probability positive / probability negative case
+# The odds-scale plot let's us see that a person who is about 10 years old
+# is 3 times more likely to survive than someone approaching 30
+heart_transplant_plus <- heart_transplant_plus |>
+  mutate(odds_hat = y_hat / (1 - y_hat))
+ggplot(heart_transplant_plus, aes(x = age, y = odds_hat)) +
+  geom_point() +
+  geom_line() +
+  scale_y_continuous("Odds of being alive")
+
+# The log-odds scale lets us see logistic regression as a
+# line but the scale is difficult to interpret
+heart_transplant_plus <- heart_transplant_plus |>
+  mutate(log_odds_hat = log(odds_hat))
+
+
+# The simplest way to make probabilistic predictions
+# is to round the predictions
+mod_binary <- augment(mod_heart, type.predict = "response") |>
+  mutate(alive_hat = round(.fitted))
+
+mod_binary |>
+  select(is_alive, age, .fitted, alive_hat)
+
+mod_binary |> select(is_alive, alive_hat) |> table()
+
+###############################
+# --- CASE STUDY PRACTICE --- #
+# Using the nyc dataset
+###############################
+
+# We can see that Price and Decor are correlated
+# We see that Price and Food are correlated
+# while Price and Decor are not
+nyc |> select(-restaurant) |> pairs()
+
+# With slope = 2.939, we can say that
+# Each additional point of food quality is associated with
+# 2.939 change in price
+lm(price ~ food, data = nyc)
+
+
+# Let's explore how location affects price
+# East Side is about $4 more expensive
+nyc |>
+  group_by(east) |>
+  summarize(mean_price = mean(price))
+
+# Let's explore what might be associated with this greater price
+# on the East Side
+lm(price ~ food + east, data = nyc)
+# fit model
+
+library(plotly)
+# draw 3D scatterplot
+p <- plot_ly(data = nyc, z = ~price, x = ~food, y = ~service, opacity = 0.6) |>
+  add_markers()
+
+# draw a plane
+p |>
+  add_surface(x = ~x, y = ~y, z = ~plane, showscale = FALSE)
