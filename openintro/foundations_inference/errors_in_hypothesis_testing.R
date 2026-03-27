@@ -1,5 +1,6 @@
 library("openintro")
 library("tidyverse")
+library("infer")
 
 # Randomizing Opportunity Cost
 # The study:

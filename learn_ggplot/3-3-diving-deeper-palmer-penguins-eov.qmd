@@ -137,7 +137,10 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: violin-weight-species
-ggplot(penguins, aes(x = body_mass_g, y = species, color = species, fill = species)) +
+ggplot(
+  penguins,
+  aes(x = body_mass_g, y = species, color = species, fill = species)
+) +
   geom_violin(alpha = 0.2, show.legend = FALSE)
 ```
 
@@ -160,7 +163,10 @@ Add color as you see fit and turn off legends if not needed.
 
 ```{r}
 #| label: beeswarm-weight-species
-ggplot(penguins, aes(x = species, y = body_mass_g, color = species, shape = species)) +
+ggplot(
+  penguins,
+  aes(x = species, y = body_mass_g, color = species, shape = species)
+) +
   geom_beeswarm(show.legend = FALSE)
 ```
 

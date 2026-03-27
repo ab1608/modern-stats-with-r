@@ -13,3 +13,10 @@ _site/
 */libs
 */figure-html
 *.csv
+
+# Python
+.venv
+.__pycache__/
+.evn
+.python-version
+.ipynb_checkpoints/

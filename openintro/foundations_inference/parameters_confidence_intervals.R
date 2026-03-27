@@ -1,5 +1,6 @@
 library("openintro")
 library("tidyverse")
+library("infer")
 
 # These bootstrap conidence interval methods work for any statistic and parameter,
 # as long as the following technical conditions hold:
